@@ -190,10 +190,10 @@ for _, scriptData in ipairs(Scripts) do
     ScriptButton.Size = UDim2.new(1, -20, 0, 45)
     ScriptButton.Position = UDim2.new(0, 10, 0, 0)
     ScriptButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-    ScriptButton.BorderColor3 = Color3.fromRGB(255, 105, 180) -- Pink border
+    ScriptButton.BorderColor3 = Color3.fromRGB(255, 105, 180)
     ScriptButton.BorderSizePixel = 1
-    ScriptButton.Text = scriptData.Name .. "  [Insert]"
-    ScriptButton.TextColor3 = Color3.fromRGB(255, 200, 220) -- Light pink text
+    ScriptButton.Text = scriptData.Name .. "  [CLICK HERE]"
+    ScriptButton.TextColor3 = Color3.fromRGB(255, 200, 220)
     ScriptButton.Font = Enum.Font.SourceSans
     ScriptButton.TextSize = 16
     ScriptButton.TextXAlignment = Enum.TextXAlignment.Left
