@@ -1,13 +1,15 @@
--- Script Hub for Roblox (Lua)
--- White theme with rounded edges, smooth intro loading screen, and pink loading bar
+-- Script Hub for Roblox (Lua) - Mobile-friendly with draggable loading screen and main frame
+-- White theme, rounded edges, smooth intro loading, pink loading bar
 local Players = game:GetService("Players")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
--- Create the main interface
+-- Create main interface
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ScriptHub"
 ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
 
 -- Create loading screen
 local LoadingFrame = Instance.new("Frame")
@@ -20,7 +22,7 @@ LoadingFrame.BorderSizePixel = 0
 LoadingFrame.ZIndex = 10
 LoadingFrame.Parent = ScreenGui
 
--- Create loading container
+-- Loading container (draggable)
 local LoadingContainer = Instance.new("Frame")
 LoadingContainer.Name = "LoadingContainer"
 LoadingContainer.Size = UDim2.new(0, 400, 0, 200)
@@ -31,7 +33,7 @@ LoadingContainer.BorderSizePixel = 0
 LoadingContainer.ZIndex = 11
 LoadingContainer.Parent = LoadingFrame
 
--- Loading title
+-- Loading title (drag handle)
 local LoadingTitle = Instance.new("TextLabel")
 LoadingTitle.Name = "LoadingTitle"
 LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
@@ -99,7 +101,7 @@ CharacterDesc.TextSize = 16
 CharacterDesc.ZIndex = 12
 CharacterDesc.Parent = LoadingContainer
 
--- Tips and trivia array (fun facts only)
+-- Tips array
 local Tips = {
     "Fun Fact: Lua is used in many games besides Roblox!",
     "Fun Fact: Scripting can automate boring tasks!",
@@ -123,18 +125,13 @@ local Tips = {
     "Fun Fact: Scripts can create entire worlds!"
 }
 
--- Cycle through tips
 local tipIndex = 1
-
 local function UpdateTip()
     LoadingTip.Text = Tips[tipIndex]
     tipIndex = tipIndex + 1
-    if tipIndex > #Tips then
-        tipIndex = 1
-    end
+    if tipIndex > #Tips then tipIndex = 1 end
 end
 
--- Update tip every 5 seconds
 task.spawn(function()
     while LoadingFrame.Visible do
         task.wait(5)
@@ -154,7 +151,6 @@ Frame.Visible = false
 Frame.ZIndex = 5
 Frame.Parent = ScreenGui
 
--- Rounded corners for main frame
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 15)
 MainCorner.Parent = Frame
@@ -175,7 +171,7 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 15)
 TitleCorner.Parent = Title
 
--- Create a scrolling frame for script buttons
+-- Scrolling frame for buttons
 local ScrollingFrame = Instance.new("ScrollingFrame")
 ScrollingFrame.Name = "ScriptList"
 ScrollingFrame.Size = UDim2.new(1, 0, 1, -40)
@@ -194,19 +190,14 @@ UIListLayout.Parent = ScrollingFrame
 local Scripts = {
     {
         Name = "WAGURI SCRIPT",
-        Code = [[
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/mm2/refs/heads/main/waguriiii"))()
-        ]]
+        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Waguriiiii/Murder-mystery-2/refs/heads/main/Waguri.lua"))()]]
     },
     {
         Name = "OVERDRIVE H SCRIPT",
-        Code = [[
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/mm2/refs/heads/main/odh.lua"))()
-        ]]
+        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/mm2/refs/heads/main/odh.lua"))()]]
     },
 }
 
--- Create square buttons for each script
 for _, scriptData in ipairs(Scripts) do
     local ScriptButton = Instance.new("TextButton")
     ScriptButton.Name = scriptData.Name .. "Button"
@@ -226,16 +217,13 @@ for _, scriptData in ipairs(Scripts) do
     ButtonCorner.CornerRadius = UDim.new(0, 10)
     ButtonCorner.Parent = ScriptButton
     
-    -- Hover effect
     ScriptButton.MouseEnter:Connect(function()
         TweenService:Create(ScriptButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 200, 220)}):Play()
     end)
-    
     ScriptButton.MouseLeave:Connect(function()
         TweenService:Create(ScriptButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
     end)
     
-    -- Execute script when button is clicked
     ScriptButton.MouseButton1Click:Connect(function()
         local success, err = pcall(function()
             loadstring(scriptData.Code)()
@@ -243,8 +231,6 @@ for _, scriptData in ipairs(Scripts) do
         if not success then
             warn("Execution error: " .. tostring(err))
         end
-        
-        -- Smoothly vanish the hub
         local vanishTween = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
         vanishTween:Play()
         vanishTween.Completed:Connect(function()
@@ -253,47 +239,109 @@ for _, scriptData in ipairs(Scripts) do
     end)
 end
 
--- Window dragging functionality
-local dragging = false
-local dragStart = nil
-local startPos = nil
-
-Title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
+-- ----- Universal drag system (mobile + PC) for LoadingContainer and Frame via Title -----
+local function MakeDraggable(frame, handle)
+    local dragData = { dragging = false, dragStart = nil, startPos = nil, startMousePos = nil }
+    
+    local function onInputBegan(input, isTouch)
+        if isTouch or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragData.dragging = true
+            dragData.dragStart = input.Position
+            dragData.startPos = frame.Position
+            dragData.startMousePos = input.Position
+        end
     end
-end)
-
-Title.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    
+    local function onInputChanged(input, isTouch)
+        if dragData.dragging then
+            if isTouch or input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Position - dragData.dragStart
+                frame.Position = UDim2.new(
+                    dragData.startPos.X.Scale, 
+                    dragData.startPos.X.Offset + delta.X,
+                    dragData.startPos.Y.Scale, 
+                    dragData.startPos.Y.Offset + delta.Y
+                )
+            end
+        end
     end
-end)
-
-Title.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
+    
+    local function onInputEnded(input, isTouch)
+        if isTouch or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragData.dragging = false
+        end
     end
-end)
+    
+    -- Connect to both mouse and touch events
+    handle.InputBegan:Connect(onInputBegan)
+    handle.InputChanged:Connect(onInputChanged)
+    handle.InputEnded:Connect(onInputEnded)
+    
+    -- Also connect directly to UserInputService for touch robustness
+    local touchBeganConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType == Enum.UserInputType.Touch then
+            -- Check if touch started on handle
+            local handleAbsPos = handle.AbsolutePosition
+            local handleSize = handle.AbsoluteSize
+            local touchPos = input.Position
+            if touchPos.X >= handleAbsPos.X and touchPos.X <= handleAbsPos.X + handleSize.X and
+               touchPos.Y >= handleAbsPos.Y and touchPos.Y <= handleAbsPos.Y + handleSize.Y then
+                dragData.dragging = true
+                dragData.dragStart = input.Position
+                dragData.startPos = frame.Position
+                dragData.startMousePos = input.Position
+            end
+        end
+    end)
+    
+    local touchMoveConn = UserInputService.InputChanged:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if dragData.dragging and input.UserInputType == Enum.UserInputType.Touch then
+            local delta = input.Position - dragData.dragStart
+            frame.Position = UDim2.new(
+                dragData.startPos.X.Scale, 
+                dragData.startPos.X.Offset + delta.X,
+                dragData.startPos.Y.Scale, 
+                dragData.startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+    
+    local touchEndConn = UserInputService.InputEnded:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType == Enum.UserInputType.Touch then
+            dragData.dragging = false
+        end
+    end)
+    
+    -- Cleanup connections when frame is destroyed
+    frame.AncestryChanged:Connect(function()
+        if not frame.Parent then
+            touchBeganConn:Disconnect()
+            touchMoveConn:Disconnect()
+            touchEndConn:Disconnect()
+        end
+    end)
+end
 
--- Animate loading bar over 2 minutes (120 seconds)
-local loadingTween = TweenService:Create(LoadingBar, TweenInfo.new(120, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 1, 0)})
+-- Make LoadingContainer draggable via LoadingTitle
+MakeDraggable(LoadingContainer, LoadingTitle)
+
+-- Make MainFrame draggable via Title
+MakeDraggable(Frame, Title)
+
+-- Animate loading bar over 120 seconds
+local loadingTween = TweenService:Create(LoadingBar, TweenInfo.new(120, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 1, 0)})
 loadingTween:Play()
 
--- Show main frame after loading completes
 loadingTween.Completed:Connect(function()
-    -- Fade out loading screen
-    local fadeTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+    local fadeTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {Transparency = 1})
     fadeTween:Play()
     fadeTween.Completed:Connect(function()
         LoadingFrame.Visible = false
     end)
-    
-    -- Show and fade in main frame
     Frame.Visible = true
-    local showTween = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+    local showTween = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {Transparency = 0})
     showTween:Play()
 end)
