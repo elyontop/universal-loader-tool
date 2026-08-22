@@ -1,5 +1,5 @@
--- Script Hub for Roblox (Lua) - Mobile-friendly with draggable loading screen and main frame
--- White theme, rounded edges, smooth intro loading, pink loading bar
+-- Script Hub for Roblox (Lua) - Pink themed, dark background with pink accents, list style, exactly 2 scripts
+-- Mobile-friendly, draggable loading screen and main frame
 local Players = game:GetService("Players")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
@@ -33,14 +33,14 @@ LoadingContainer.BorderSizePixel = 0
 LoadingContainer.ZIndex = 11
 LoadingContainer.Parent = LoadingFrame
 
--- Loading title (drag handle)
+-- Loading title (drag handle) - Pink
 local LoadingTitle = Instance.new("TextLabel")
 LoadingTitle.Name = "LoadingTitle"
 LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
 LoadingTitle.Position = UDim2.new(0, 0, 0, 20)
 LoadingTitle.BackgroundTransparency = 1
 LoadingTitle.Text = "ELYSCRIPTS"
-LoadingTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingTitle.TextColor3 = Color3.fromRGB(255, 105, 180) -- Pink
 LoadingTitle.Font = Enum.Font.SourceSansBold
 LoadingTitle.TextSize = 28
 LoadingTitle.ZIndex = 12
@@ -61,12 +61,12 @@ local LoadingBarCorner = Instance.new("UICorner")
 LoadingBarCorner.CornerRadius = UDim.new(0, 10)
 LoadingBarCorner.Parent = LoadingBarBg
 
--- Loading bar fill
+-- Loading bar fill - Pink
 local LoadingBar = Instance.new("Frame")
 LoadingBar.Name = "LoadingBar"
 LoadingBar.Size = UDim2.new(0, 0, 1, 0)
 LoadingBar.Position = UDim2.new(0, 0, 0, 0)
-LoadingBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+LoadingBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Pink
 LoadingBar.BorderSizePixel = 0
 LoadingBar.ZIndex = 13
 LoadingBar.Parent = LoadingBarBg
@@ -75,7 +75,7 @@ local LoadingBarFillCorner = Instance.new("UICorner")
 LoadingBarFillCorner.CornerRadius = UDim.new(0, 10)
 LoadingBarFillCorner.Parent = LoadingBar
 
--- Loading tip text
+-- Loading tip text - White
 local LoadingTip = Instance.new("TextLabel")
 LoadingTip.Name = "LoadingTip"
 LoadingTip.Size = UDim2.new(0.9, 0, 0, 30)
@@ -88,14 +88,14 @@ LoadingTip.TextSize = 14
 LoadingTip.ZIndex = 12
 LoadingTip.Parent = LoadingContainer
 
--- Character description label
+-- Character description label - Pink
 local CharacterDesc = Instance.new("TextLabel")
 CharacterDesc.Name = "CharacterDesc"
 CharacterDesc.Size = UDim2.new(0.9, 0, 0, 50)
 CharacterDesc.Position = UDim2.new(0.05, 0, 0.3, 0)
 CharacterDesc.BackgroundTransparency = 1
 CharacterDesc.Text = "Ely - The Guardian of Scripts"
-CharacterDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+CharacterDesc.TextColor3 = Color3.fromRGB(255, 105, 180) -- Pink
 CharacterDesc.Font = Enum.Font.SourceSansBold
 CharacterDesc.TextSize = 16
 CharacterDesc.ZIndex = 12
@@ -139,12 +139,12 @@ task.spawn(function()
     end
 end)
 
--- Create main hub frame (hidden initially)
+-- ----- Main Hub - Dark theme with Pink accents -----
 local Frame = Instance.new("Frame")
 Frame.Name = "MainFrame"
-Frame.Size = UDim2.new(0, 600, 0, 450)
-Frame.Position = UDim2.new(0.5, -300, 0.5, -225)
-Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Size = UDim2.new(0, 500, 0, 450)
+Frame.Position = UDim2.new(0.5, -250, 0.5, -225)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30) -- Darker background
 Frame.BackgroundTransparency = 1
 Frame.BorderSizePixel = 0
 Frame.Visible = false
@@ -152,41 +152,42 @@ Frame.ZIndex = 5
 Frame.Parent = ScreenGui
 
 local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 15)
+MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = Frame
 
+-- Title bar - Dark with Pink text
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
-Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Size = UDim2.new(1, 0, 0, 45)
 Title.Position = UDim2.new(0, 0, 0, 0)
-Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Title.Text = "ElyScripts Hub"
-Title.TextColor3 = Color3.fromRGB(0, 0, 0)
+Title.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+Title.Text = "Script Loader"
+Title.TextColor3 = Color3.fromRGB(255, 105, 180) -- Pink
 Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 20
+Title.TextSize = 22
 Title.ZIndex = 6
 Title.Parent = Frame
 
 local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 15)
+TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = Title
 
--- Scrolling frame for buttons
+-- Scrolling frame for script list (dark)
 local ScrollingFrame = Instance.new("ScrollingFrame")
 ScrollingFrame.Name = "ScriptList"
-ScrollingFrame.Size = UDim2.new(1, 0, 1, -40)
-ScrollingFrame.Position = UDim2.new(0, 0, 0, 40)
-ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingFrame.Size = UDim2.new(1, 0, 1, -75)
+ScrollingFrame.Position = UDim2.new(0, 0, 0, 45)
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 ScrollingFrame.BorderSizePixel = 0
 ScrollingFrame.ScrollBarThickness = 8
 ScrollingFrame.ZIndex = 6
 ScrollingFrame.Parent = Frame
 
 local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.Padding = UDim.new(0, 8)
 UIListLayout.Parent = ScrollingFrame
 
--- Script database
+-- Script database - exactly 2 scripts
 local Scripts = {
     {
         Name = "WAGURI SCRIPT",
@@ -201,29 +202,32 @@ local Scripts = {
 for _, scriptData in ipairs(Scripts) do
     local ScriptButton = Instance.new("TextButton")
     ScriptButton.Name = scriptData.Name .. "Button"
-    ScriptButton.Size = UDim2.new(1, -20, 0, 100)
+    ScriptButton.Size = UDim2.new(1, -20, 0, 45)
     ScriptButton.Position = UDim2.new(0, 10, 0, 0)
-    ScriptButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    ScriptButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    ScriptButton.BorderSizePixel = 2
-    ScriptButton.Text = scriptData.Name .. "\n\n[ CLICK TO EXECUTE ]"
-    ScriptButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-    ScriptButton.Font = Enum.Font.SourceSansBold
+    ScriptButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+    ScriptButton.BorderColor3 = Color3.fromRGB(255, 105, 180) -- Pink border
+    ScriptButton.BorderSizePixel = 1
+    ScriptButton.Text = scriptData.Name .. "  [Insert]"
+    ScriptButton.TextColor3 = Color3.fromRGB(255, 200, 220) -- Light pink text
+    ScriptButton.Font = Enum.Font.SourceSans
     ScriptButton.TextSize = 16
+    ScriptButton.TextXAlignment = Enum.TextXAlignment.Left
     ScriptButton.ZIndex = 7
     ScriptButton.Parent = ScrollingFrame
     
     local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 10)
+    ButtonCorner.CornerRadius = UDim.new(0, 6)
     ButtonCorner.Parent = ScriptButton
     
+    -- Hover effect - Pink highlight
     ScriptButton.MouseEnter:Connect(function()
-        TweenService:Create(ScriptButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 200, 220)}):Play()
+        TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 30, 40)}):Play()
     end)
     ScriptButton.MouseLeave:Connect(function()
-        TweenService:Create(ScriptButton, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+        TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 50)}):Play()
     end)
     
+    -- Execute on click
     ScriptButton.MouseButton1Click:Connect(function()
         local success, err = pcall(function()
             loadstring(scriptData.Code)()
@@ -231,7 +235,7 @@ for _, scriptData in ipairs(Scripts) do
         if not success then
             warn("Execution error: " .. tostring(err))
         end
-        local vanishTween = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+        local vanishTween = TweenService:Create(Frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
         vanishTween:Play()
         vanishTween.Completed:Connect(function()
             Frame.Visible = false
@@ -239,22 +243,35 @@ for _, scriptData in ipairs(Scripts) do
     end)
 end
 
--- ----- Universal drag system (mobile + PC) for LoadingContainer and Frame via Title -----
+-- Footer text - Pink
+local Footer = Instance.new("TextLabel")
+Footer.Name = "Footer"
+Footer.Size = UDim2.new(1, 0, 0, 30)
+Footer.Position = UDim2.new(0, 0, 1, -30)
+Footer.BackgroundTransparency = 1
+Footer.Text = "Developed by Jopio0819"
+Footer.TextColor3 = Color3.fromRGB(255, 105, 180) -- Pink
+Footer.Font = Enum.Font.SourceSans
+Footer.TextSize = 14
+Footer.TextXAlignment = Enum.TextXAlignment.Center
+Footer.ZIndex = 6
+Footer.Parent = Frame
+
+-- ----- Universal drag system (mobile + PC) -----
 local function MakeDraggable(frame, handle)
-    local dragData = { dragging = false, dragStart = nil, startPos = nil, startMousePos = nil }
+    local dragData = { dragging = false, dragStart = nil, startPos = nil }
     
-    local function onInputBegan(input, isTouch)
-        if isTouch or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    local function onInputBegan(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragData.dragging = true
             dragData.dragStart = input.Position
             dragData.startPos = frame.Position
-            dragData.startMousePos = input.Position
         end
     end
     
-    local function onInputChanged(input, isTouch)
+    local function onInputChanged(input)
         if dragData.dragging then
-            if isTouch or input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
                 local delta = input.Position - dragData.dragStart
                 frame.Position = UDim2.new(
                     dragData.startPos.X.Scale, 
@@ -266,36 +283,32 @@ local function MakeDraggable(frame, handle)
         end
     end
     
-    local function onInputEnded(input, isTouch)
-        if isTouch or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    local function onInputEnded(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragData.dragging = false
         end
     end
     
-    -- Connect to both mouse and touch events
     handle.InputBegan:Connect(onInputBegan)
     handle.InputChanged:Connect(onInputChanged)
     handle.InputEnded:Connect(onInputEnded)
     
-    -- Also connect directly to UserInputService for touch robustness
-    local touchBeganConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    -- Touch fallback via UserInputService
+    local touchBegan = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.UserInputType == Enum.UserInputType.Touch then
-            -- Check if touch started on handle
-            local handleAbsPos = handle.AbsolutePosition
-            local handleSize = handle.AbsoluteSize
-            local touchPos = input.Position
-            if touchPos.X >= handleAbsPos.X and touchPos.X <= handleAbsPos.X + handleSize.X and
-               touchPos.Y >= handleAbsPos.Y and touchPos.Y <= handleAbsPos.Y + handleSize.Y then
+            local pos = input.Position
+            local abs = handle.AbsolutePosition
+            local size = handle.AbsoluteSize
+            if pos.X >= abs.X and pos.X <= abs.X + size.X and pos.Y >= abs.Y and pos.Y <= abs.Y + size.Y then
                 dragData.dragging = true
                 dragData.dragStart = input.Position
                 dragData.startPos = frame.Position
-                dragData.startMousePos = input.Position
             end
         end
     end)
     
-    local touchMoveConn = UserInputService.InputChanged:Connect(function(input, gameProcessed)
+    local touchMove = UserInputService.InputChanged:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if dragData.dragging and input.UserInputType == Enum.UserInputType.Touch then
             local delta = input.Position - dragData.dragStart
@@ -308,27 +321,23 @@ local function MakeDraggable(frame, handle)
         end
     end)
     
-    local touchEndConn = UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    local touchEnd = UserInputService.InputEnded:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.UserInputType == Enum.UserInputType.Touch then
             dragData.dragging = false
         end
     end)
     
-    -- Cleanup connections when frame is destroyed
     frame.AncestryChanged:Connect(function()
         if not frame.Parent then
-            touchBeganConn:Disconnect()
-            touchMoveConn:Disconnect()
-            touchEndConn:Disconnect()
+            touchBegan:Disconnect()
+            touchMove:Disconnect()
+            touchEnd:Disconnect()
         end
     end)
 end
 
--- Make LoadingContainer draggable via LoadingTitle
 MakeDraggable(LoadingContainer, LoadingTitle)
-
--- Make MainFrame draggable via Title
 MakeDraggable(Frame, Title)
 
 -- Animate loading bar over 120 seconds
