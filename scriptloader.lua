@@ -176,7 +176,7 @@ UIListLayout.Parent = ScrollingFrame
 local Scripts = {
     {
         Name = "WAGURI SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://cdn.sourceb.in/bins/sosSdztHIJ/0"))()]]
+        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/waguriscript2026/refs/heads/main/waguriiii"))()]]
     },
     {
         Name = "OVERDRIVE H SCRIPT",
