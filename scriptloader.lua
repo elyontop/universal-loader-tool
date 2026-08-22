@@ -1,17 +1,13 @@
--- Script Hub for Roblox (Lua) - Pink themed, dark background with pink accents, list style, exactly 2 scripts
--- Mobile-friendly, draggable loading screen and main frame
 local Players = game:GetService("Players")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
--- Create main interface
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ScriptHub"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
--- Create loading screen
 local LoadingFrame = Instance.new("Frame")
 LoadingFrame.Name = "LoadingScreen"
 LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -22,7 +18,6 @@ LoadingFrame.BorderSizePixel = 0
 LoadingFrame.ZIndex = 10
 LoadingFrame.Parent = ScreenGui
 
--- Loading container (draggable)
 local LoadingContainer = Instance.new("Frame")
 LoadingContainer.Name = "LoadingContainer"
 LoadingContainer.Size = UDim2.new(0, 400, 0, 200)
@@ -33,7 +28,6 @@ LoadingContainer.BorderSizePixel = 0
 LoadingContainer.ZIndex = 11
 LoadingContainer.Parent = LoadingFrame
 
--- Loading title (drag handle) - Pink
 local LoadingTitle = Instance.new("TextLabel")
 LoadingTitle.Name = "LoadingTitle"
 LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
@@ -46,7 +40,6 @@ LoadingTitle.TextSize = 28
 LoadingTitle.ZIndex = 12
 LoadingTitle.Parent = LoadingContainer
 
--- Loading bar background
 local LoadingBarBg = Instance.new("Frame")
 LoadingBarBg.Name = "LoadingBarBg"
 LoadingBarBg.Size = UDim2.new(0.8, 0, 0, 20)
@@ -61,7 +54,6 @@ local LoadingBarCorner = Instance.new("UICorner")
 LoadingBarCorner.CornerRadius = UDim.new(0, 10)
 LoadingBarCorner.Parent = LoadingBarBg
 
--- Loading bar fill - Pink
 local LoadingBar = Instance.new("Frame")
 LoadingBar.Name = "LoadingBar"
 LoadingBar.Size = UDim2.new(0, 0, 1, 0)
@@ -75,7 +67,6 @@ local LoadingBarFillCorner = Instance.new("UICorner")
 LoadingBarFillCorner.CornerRadius = UDim.new(0, 10)
 LoadingBarFillCorner.Parent = LoadingBar
 
--- Loading tip text - White
 local LoadingTip = Instance.new("TextLabel")
 LoadingTip.Name = "LoadingTip"
 LoadingTip.Size = UDim2.new(0.9, 0, 0, 30)
@@ -88,7 +79,6 @@ LoadingTip.TextSize = 14
 LoadingTip.ZIndex = 12
 LoadingTip.Parent = LoadingContainer
 
--- Character description label - Pink
 local CharacterDesc = Instance.new("TextLabel")
 CharacterDesc.Name = "CharacterDesc"
 CharacterDesc.Size = UDim2.new(0.9, 0, 0, 50)
@@ -101,7 +91,6 @@ CharacterDesc.TextSize = 16
 CharacterDesc.ZIndex = 12
 CharacterDesc.Parent = LoadingContainer
 
--- Tips array
 local Tips = {
     "Fun Fact: Lua is used in many games besides Roblox!",
     "Fun Fact: Scripting can automate boring tasks!",
@@ -139,7 +128,6 @@ task.spawn(function()
     end
 end)
 
--- ----- Main Hub - Dark theme with Pink accents -----
 local Frame = Instance.new("Frame")
 Frame.Name = "MainFrame"
 Frame.Size = UDim2.new(0, 500, 0, 450)
@@ -155,7 +143,6 @@ local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = Frame
 
--- Title bar - Dark with Pink text
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
 Title.Size = UDim2.new(1, 0, 0, 45)
@@ -172,7 +159,6 @@ local TitleCorner = Instance.new("UICorner")
 TitleCorner.CornerRadius = UDim.new(0, 12)
 TitleCorner.Parent = Title
 
--- Scrolling frame for script list (dark)
 local ScrollingFrame = Instance.new("ScrollingFrame")
 ScrollingFrame.Name = "ScriptList"
 ScrollingFrame.Size = UDim2.new(1, 0, 1, -75)
@@ -187,7 +173,6 @@ local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.Padding = UDim.new(0, 8)
 UIListLayout.Parent = ScrollingFrame
 
--- Script database - exactly 2 scripts
 local Scripts = {
     {
         Name = "WAGURI SCRIPT",
@@ -219,7 +204,6 @@ for _, scriptData in ipairs(Scripts) do
     ButtonCorner.CornerRadius = UDim.new(0, 6)
     ButtonCorner.Parent = ScriptButton
     
-    -- Hover effect - Pink highlight
     ScriptButton.MouseEnter:Connect(function()
         TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 30, 40)}):Play()
     end)
@@ -227,7 +211,6 @@ for _, scriptData in ipairs(Scripts) do
         TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 50)}):Play()
     end)
     
-    -- Execute on click
     ScriptButton.MouseButton1Click:Connect(function()
         local success, err = pcall(function()
             loadstring(scriptData.Code)()
@@ -243,7 +226,6 @@ for _, scriptData in ipairs(Scripts) do
     end)
 end
 
--- Footer text - Pink
 local Footer = Instance.new("TextLabel")
 Footer.Name = "Footer"
 Footer.Size = UDim2.new(1, 0, 0, 30)
@@ -257,7 +239,6 @@ Footer.TextXAlignment = Enum.TextXAlignment.Center
 Footer.ZIndex = 6
 Footer.Parent = Frame
 
--- ----- Universal drag system (mobile + PC) -----
 local function MakeDraggable(frame, handle)
     local dragData = { dragging = false, dragStart = nil, startPos = nil }
     
@@ -293,7 +274,6 @@ local function MakeDraggable(frame, handle)
     handle.InputChanged:Connect(onInputChanged)
     handle.InputEnded:Connect(onInputEnded)
     
-    -- Touch fallback via UserInputService
     local touchBegan = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.UserInputType == Enum.UserInputType.Touch then
@@ -340,7 +320,6 @@ end
 MakeDraggable(LoadingContainer, LoadingTitle)
 MakeDraggable(Frame, Title)
 
--- Animate loading bar over 120 seconds
 local loadingTween = TweenService:Create(LoadingBar, TweenInfo.new(120, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 1, 0)})
 loadingTween:Play()
 
