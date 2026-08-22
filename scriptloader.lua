@@ -176,7 +176,7 @@ UIListLayout.Parent = ScrollingFrame
 local Scripts = {
     {
         Name = "WAGURI SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Waguriiiii/Murder-mystery-2/refs/heads/main/Waguri.lua"))()]]
+        Code = [[loadstring(game:HttpGet("https://cdn.sourceb.in/bins/sosSdztHIJ/0"))()]]
     },
     {
         Name = "OVERDRIVE H SCRIPT",
