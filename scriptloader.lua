@@ -180,7 +180,7 @@ local Scripts = {
     },
     {
         Name = "OVERDRIVE H SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/mm2/refs/heads/main/odh.lua"))()]]
+        Code = [[loadstring(game:HttpGet("https://cdn.project-reverse.org/odh_3_5_crack.luau"))();]]
     },
 }
 
