@@ -182,6 +182,11 @@ local Scripts = {
         Name = "OVERDRIVE H SCRIPT",
         Code = [[loadstring(game:HttpGet("https://cdn.project-reverse.org/odh_3_5_crack.luau"))();]]
     },
+    {
+        Name = "DAX FREEZE TOOL SCRIPT",
+        Code = [[loadstring(game:HttpGet("https://pastebin.com/raw/xTUhZJeJ"))()]],
+        LoadDelay = 30
+    }
 }
 
 for _, scriptData in ipairs(Scripts) do
@@ -212,12 +217,28 @@ for _, scriptData in ipairs(Scripts) do
     end)
     
     ScriptButton.MouseButton1Click:Connect(function()
+        local delayTime = scriptData.LoadDelay or 0
+        if delayTime > 0 then
+            ScriptButton.Text = scriptData.Name .. "  [Loading " .. delayTime .. "s]"
+            ScriptButton.BackgroundColor3 = Color3.fromRGB(80, 40, 50)
+            ScriptButton.TextColor3 = Color3.fromRGB(255, 150, 180)
+            
+            for i = delayTime, 1, -1 do
+                ScriptButton.Text = scriptData.Name .. "  [Loading " .. i .. "s]"
+                task.wait(1)
+            end
+        end
+        
         local success, err = pcall(function()
             loadstring(scriptData.Code)()
         end)
         if not success then
             warn("Execution error: " .. tostring(err))
+            ScriptButton.Text = scriptData.Name .. "  [ERROR]"
+            ScriptButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+            task.wait(2)
         end
+        
         local vanishTween = TweenService:Create(Frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
         vanishTween:Play()
         vanishTween.Completed:Connect(function()
