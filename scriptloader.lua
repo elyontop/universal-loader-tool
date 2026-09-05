@@ -180,8 +180,7 @@ local Scripts = {
     },
     {
         Name = "OVERDRIVE H SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://cdn.project-reverse.org/odh_3_5_crack.luau"))();
-]]
+        Code = [[loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjBiNTIyNzdiLWUxMmItNDU1Yy1hZDFlLTc1YzExOTlhNzZmNyIsImtpbmQiOiJsb2FkZXIiLCJ2aXN1YWwiOnsiaWQiOiJtbTJvdmVyZHJpdmUifX0"))()]]
     },
     {
         Name = "DAX FREEZE TOOL SCRIPT",
