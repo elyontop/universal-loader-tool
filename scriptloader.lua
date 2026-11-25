@@ -1,8 +1,3 @@
--- ELYSCRIPTS | Premium Script Hub UI
--- UI refresh: responsive layout, search, status feedback, minimize/close,
--- draggable header, polished cards, and a short animated intro.
--- The two remote loader URLs below are kept exactly as requested.
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
