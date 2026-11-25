@@ -1,356 +1,635 @@
+-- ELYSCRIPTS | Premium Script Hub UI
+-- UI refresh: responsive layout, search, status feedback, minimize/close,
+-- draggable header, polished cards, and a short animated intro.
+-- The two remote loader URLs below are kept exactly as requested.
+
 local Players = game:GetService("Players")
-local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ScriptHub"
-ScreenGui.Parent = PlayerGui
-ScreenGui.ResetOnSpawn = false
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local LoadingFrame = Instance.new("Frame")
-LoadingFrame.Name = "LoadingScreen"
-LoadingFrame.Size = UDim2.new(1, 0, 1, 0)
-LoadingFrame.Position = UDim2.new(0, 0, 0, 0)
-LoadingFrame.BackgroundTransparency = 1
-LoadingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-LoadingFrame.BorderSizePixel = 0
-LoadingFrame.ZIndex = 10
-LoadingFrame.Parent = ScreenGui
-
-local LoadingContainer = Instance.new("Frame")
-LoadingContainer.Name = "LoadingContainer"
-LoadingContainer.Size = UDim2.new(0, 400, 0, 200)
-LoadingContainer.Position = UDim2.new(0.5, -200, 0.5, -100)
-LoadingContainer.BackgroundTransparency = 1
-LoadingContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-LoadingContainer.BorderSizePixel = 0
-LoadingContainer.ZIndex = 11
-LoadingContainer.Parent = LoadingFrame
-
-local LoadingTitle = Instance.new("TextLabel")
-LoadingTitle.Name = "LoadingTitle"
-LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
-LoadingTitle.Position = UDim2.new(0, 0, 0, 20)
-LoadingTitle.BackgroundTransparency = 1
-LoadingTitle.Text = "ELYSCRIPTS"
-LoadingTitle.TextColor3 = Color3.fromRGB(255, 105, 180)
-LoadingTitle.Font = Enum.Font.SourceSansBold
-LoadingTitle.TextSize = 28
-LoadingTitle.ZIndex = 12
-LoadingTitle.Parent = LoadingContainer
-
-local LoadingBarBg = Instance.new("Frame")
-LoadingBarBg.Name = "LoadingBarBg"
-LoadingBarBg.Size = UDim2.new(0.8, 0, 0, 20)
-LoadingBarBg.Position = UDim2.new(0.1, 0, 0.6, 0)
-LoadingBarBg.BackgroundTransparency = 0.5
-LoadingBarBg.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-LoadingBarBg.BorderSizePixel = 0
-LoadingBarBg.ZIndex = 12
-LoadingBarBg.Parent = LoadingContainer
-
-local LoadingBarCorner = Instance.new("UICorner")
-LoadingBarCorner.CornerRadius = UDim.new(0, 10)
-LoadingBarCorner.Parent = LoadingBarBg
-
-local LoadingBar = Instance.new("Frame")
-LoadingBar.Name = "LoadingBar"
-LoadingBar.Size = UDim2.new(0, 0, 1, 0)
-LoadingBar.Position = UDim2.new(0, 0, 0, 0)
-LoadingBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
-LoadingBar.BorderSizePixel = 0
-LoadingBar.ZIndex = 13
-LoadingBar.Parent = LoadingBarBg
-
-local LoadingBarFillCorner = Instance.new("UICorner")
-LoadingBarFillCorner.CornerRadius = UDim.new(0, 10)
-LoadingBarFillCorner.Parent = LoadingBar
-
-local LoadingTip = Instance.new("TextLabel")
-LoadingTip.Name = "LoadingTip"
-LoadingTip.Size = UDim2.new(0.9, 0, 0, 30)
-LoadingTip.Position = UDim2.new(0.05, 0, 0.75, 0)
-LoadingTip.BackgroundTransparency = 1
-LoadingTip.Text = "Fun Fact: Scripts can make games more fun!"
-LoadingTip.TextColor3 = Color3.fromRGB(255, 255, 255)
-LoadingTip.Font = Enum.Font.SourceSans
-LoadingTip.TextSize = 14
-LoadingTip.ZIndex = 12
-LoadingTip.Parent = LoadingContainer
-
-local CharacterDesc = Instance.new("TextLabel")
-CharacterDesc.Name = "CharacterDesc"
-CharacterDesc.Size = UDim2.new(0.9, 0, 0, 50)
-CharacterDesc.Position = UDim2.new(0.05, 0, 0.3, 0)
-CharacterDesc.BackgroundTransparency = 1
-CharacterDesc.Text = "Ely - The Guardian of Scripts"
-CharacterDesc.TextColor3 = Color3.fromRGB(255, 105, 180)
-CharacterDesc.Font = Enum.Font.SourceSansBold
-CharacterDesc.TextSize = 16
-CharacterDesc.ZIndex = 12
-CharacterDesc.Parent = LoadingContainer
-
-local Tips = {
-    "Fun Fact: Lua is used in many games besides Roblox!",
-    "Fun Fact: Scripting can automate boring tasks!",
-    "Fun Fact: Roblox scripting uses a modified version of Lua!",
-    "Fun Fact: Scripts can create amazing visual effects!",
-    "Fun Fact: Learning to script is like learning a superpower!",
-    "Fun Fact: Many game developers started with Roblox scripting!",
-    "Fun Fact: Scripts can make characters fly and teleport!",
-    "Fun Fact: The Roblox community shares millions of scripts!",
-    "Fun Fact: Scripting helps you understand how games work!",
-    "Fun Fact: You can create your own games with scripting!",
-    "Fun Fact: Scripts can change the color of objects instantly!",
-    "Fun Fact: Lua means 'moon' in Portuguese!",
-    "Fun Fact: Roblox has over 200 million monthly players!",
-    "Fun Fact: Scripting is a valuable skill for future careers!",
-    "Fun Fact: Many popular games use Lua scripting!",
-    "Fun Fact: Scripts can make games more challenging!",
-    "Fun Fact: You can learn scripting at any age!",
-    "Fun Fact: Scripting communities are very helpful!",
-    "Fun Fact: Roblox Studio is free to use!",
-    "Fun Fact: Scripts can create entire worlds!"
-}
-
-local tipIndex = 1
-local function UpdateTip()
-    LoadingTip.Text = Tips[tipIndex]
-    tipIndex = tipIndex + 1
-    if tipIndex > #Tips then tipIndex = 1 end
+local OLD_GUI = PlayerGui:FindFirstChild("ElyScriptsPremium")
+if OLD_GUI then
+    OLD_GUI:Destroy()
 end
 
-task.spawn(function()
-    while LoadingFrame.Visible do
-        task.wait(5)
-        UpdateTip()
+local Theme = {
+    Background = Color3.fromRGB(13, 14, 21),
+    Panel = Color3.fromRGB(21, 23, 33),
+    Panel2 = Color3.fromRGB(28, 30, 43),
+    PanelHover = Color3.fromRGB(38, 34, 52),
+    Pink = Color3.fromRGB(255, 91, 170),
+    PinkLight = Color3.fromRGB(255, 151, 202),
+    Purple = Color3.fromRGB(153, 105, 255),
+    Text = Color3.fromRGB(245, 242, 250),
+    Muted = Color3.fromRGB(155, 153, 171),
+    Green = Color3.fromRGB(91, 220, 159),
+    Red = Color3.fromRGB(255, 103, 120),
+    Stroke = Color3.fromRGB(57, 48, 72)
+}
+
+local function New(className, properties, parent)
+    local object = Instance.new(className)
+    for property, value in pairs(properties or {}) do
+        object[property] = value
     end
-end)
+    object.Parent = parent
+    return object
+end
 
-local Frame = Instance.new("Frame")
-Frame.Name = "MainFrame"
-Frame.Size = UDim2.new(0, 500, 0, 450)
-Frame.Position = UDim2.new(0.5, -250, 0.5, -225)
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-Frame.BackgroundTransparency = 1
-Frame.BorderSizePixel = 0
-Frame.Visible = false
-Frame.ZIndex = 5
-Frame.Parent = ScreenGui
+local function Corner(parent, radius)
+    return New("UICorner", {CornerRadius = UDim.new(0, radius or 10)}, parent)
+end
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent = Frame
+local function Stroke(parent, color, transparency, thickness)
+    return New("UIStroke", {
+        Color = color or Theme.Stroke,
+        Transparency = transparency or 0,
+        Thickness = thickness or 1
+    }, parent)
+end
 
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.Size = UDim2.new(1, 0, 0, 45)
-Title.Position = UDim2.new(0, 0, 0, 0)
-Title.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-Title.Text = "Script Loader"
-Title.TextColor3 = Color3.fromRGB(255, 105, 180)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 22
-Title.ZIndex = 6
-Title.Parent = Frame
+local function Tween(object, duration, properties, style)
+    local tween = TweenService:Create(
+        object,
+        TweenInfo.new(duration or 0.2, style or Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        properties
+    )
+    tween:Play()
+    return tween
+end
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = Title
+local ScreenGui = New("ScreenGui", {
+    Name = "ElyScriptsPremium",
+    ResetOnSpawn = false,
+    ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+    IgnoreGuiInset = true
+}, PlayerGui)
 
-local ScrollingFrame = Instance.new("ScrollingFrame")
-ScrollingFrame.Name = "ScriptList"
-ScrollingFrame.Size = UDim2.new(1, 0, 1, -75)
-ScrollingFrame.Position = UDim2.new(0, 0, 0, 45)
-ScrollingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-ScrollingFrame.BorderSizePixel = 0
-ScrollingFrame.ScrollBarThickness = 8
-ScrollingFrame.ZIndex = 6
-ScrollingFrame.Parent = Frame
+-- Intro overlay
+local Intro = New("Frame", {
+    Name = "Intro",
+    Size = UDim2.fromScale(1, 1),
+    BackgroundColor3 = Theme.Background,
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ZIndex = 50
+}, ScreenGui)
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0, 8)
-UIListLayout.Parent = ScrollingFrame
+local IntroGlow = New("Frame", {
+    Size = UDim2.fromOffset(230, 230),
+    Position = UDim2.new(0.5, -115, 0.5, -145),
+    BackgroundColor3 = Theme.Pink,
+    BackgroundTransparency = 0.88,
+    BorderSizePixel = 0,
+    ZIndex = 51
+}, Intro)
+Corner(IntroGlow, 115)
+
+local IntroTitle = New("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 54),
+    Position = UDim2.new(0, 0, 0.5, -35),
+    BackgroundTransparency = 1,
+    Text = "ELY SCRIPTS",
+    TextColor3 = Theme.Text,
+    Font = Enum.Font.GothamBlack,
+    TextSize = 31,
+    ZIndex = 52
+}, Intro)
+
+local IntroSub = New("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 25),
+    Position = UDim2.new(0, 0, 0.5, 14),
+    BackgroundTransparency = 1,
+    Text = "PREMIUM SCRIPT HUB",
+    TextColor3 = Theme.PinkLight,
+    Font = Enum.Font.GothamMedium,
+    TextSize = 11,
+    ZIndex = 52
+}, Intro)
+
+local IntroTrack = New("Frame", {
+    Size = UDim2.fromOffset(190, 4),
+    Position = UDim2.new(0.5, -95, 0.5, 57),
+    BackgroundColor3 = Theme.Panel2,
+    BorderSizePixel = 0,
+    ZIndex = 52
+}, Intro)
+Corner(IntroTrack, 4)
+
+local IntroFill = New("Frame", {
+    Size = UDim2.fromScale(0, 1),
+    BackgroundColor3 = Theme.Pink,
+    BorderSizePixel = 0,
+    ZIndex = 53
+}, IntroTrack)
+Corner(IntroFill, 4)
+
+local IntroCountdown = New("TextLabel", {
+    Size = UDim2.fromOffset(220, 22),
+    Position = UDim2.new(0.5, -110, 0.5, 72),
+    BackgroundTransparency = 1,
+    Text = "60 seconds remaining",
+    TextColor3 = Theme.Muted,
+    Font = Enum.Font.Gotham,
+    TextSize = 11,
+    TextXAlignment = Enum.TextXAlignment.Center,
+    ZIndex = 52
+}, Intro)
+
+-- Main window
+local Main = New("Frame", {
+    Name = "Main",
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.53),
+    Size = UDim2.fromOffset(560, 430),
+    BackgroundColor3 = Theme.Background,
+    BorderSizePixel = 0,
+    Visible = false,
+    ClipsDescendants = true,
+    ZIndex = 2
+}, ScreenGui)
+Corner(Main, 16)
+Stroke(Main, Theme.Stroke, 0.15, 1.2)
+
+local MainScale = New("UIScale", {Scale = 1}, Main)
+local function UpdateScale()
+    local camera = workspace.CurrentCamera
+    if not camera then return end
+    local viewport = camera.ViewportSize
+    MainScale.Scale = math.clamp(math.min(viewport.X / 650, viewport.Y / 520), 0.68, 1)
+end
+UpdateScale()
+if workspace.CurrentCamera then
+    workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(UpdateScale)
+end
+
+-- Header
+local Header = New("Frame", {
+    Size = UDim2.new(1, 0, 0, 66),
+    BackgroundColor3 = Theme.Panel,
+    BorderSizePixel = 0,
+    ZIndex = 3
+}, Main)
+
+local HeaderAccent = New("Frame", {
+    Size = UDim2.new(1, 0, 0, 2),
+    BackgroundColor3 = Theme.Pink,
+    BorderSizePixel = 0,
+    ZIndex = 4
+}, Header)
+New("UIGradient", {
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Theme.Pink),
+        ColorSequenceKeypoint.new(1, Theme.Purple)
+    })
+}, HeaderAccent)
+
+local BrandMark = New("Frame", {
+    Size = UDim2.fromOffset(38, 38),
+    Position = UDim2.fromOffset(17, 14),
+    BackgroundColor3 = Theme.Pink,
+    BorderSizePixel = 0,
+    ZIndex = 4
+}, Header)
+Corner(BrandMark, 11)
+New("UIGradient", {
+    Color = ColorSequence.new(Theme.Pink, Theme.Purple),
+    Rotation = 35
+}, BrandMark)
+
+New("TextLabel", {
+    Size = UDim2.fromScale(1, 1),
+    BackgroundTransparency = 1,
+    Text = "E",
+    TextColor3 = Color3.new(1, 1, 1),
+    Font = Enum.Font.GothamBlack,
+    TextSize = 23,
+    ZIndex = 5
+}, BrandMark)
+
+New("TextLabel", {
+    Size = UDim2.new(0, 250, 0, 25),
+    Position = UDim2.fromOffset(66, 12),
+    BackgroundTransparency = 1,
+    Text = "ELY SCRIPTS",
+    TextColor3 = Theme.Text,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.GothamBold,
+    TextSize = 17,
+    ZIndex = 4
+}, Header)
+
+New("TextLabel", {
+    Size = UDim2.new(0, 250, 0, 18),
+    Position = UDim2.fromOffset(66, 35),
+    BackgroundTransparency = 1,
+    Text = "YOUR PERSONAL SCRIPT CENTER",
+    TextColor3 = Theme.Muted,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.GothamMedium,
+    TextSize = 9,
+    ZIndex = 4
+}, Header)
+
+local Minimize = New("TextButton", {
+    Size = UDim2.fromOffset(30, 30),
+    Position = UDim2.new(1, -76, 0, 17),
+    BackgroundColor3 = Theme.Panel2,
+    Text = "—",
+    TextColor3 = Theme.Muted,
+    Font = Enum.Font.GothamBold,
+    TextSize = 15,
+    AutoButtonColor = false,
+    ZIndex = 5
+}, Header)
+Corner(Minimize, 8)
+
+local Close = New("TextButton", {
+    Size = UDim2.fromOffset(30, 30),
+    Position = UDim2.new(1, -39, 0, 17),
+    BackgroundColor3 = Color3.fromRGB(66, 34, 49),
+    Text = "×",
+    TextColor3 = Theme.PinkLight,
+    Font = Enum.Font.GothamBold,
+    TextSize = 19,
+    AutoButtonColor = false,
+    ZIndex = 5
+}, Header)
+Corner(Close, 8)
+
+-- Content heading
+New("TextLabel", {
+    Size = UDim2.new(1, -40, 0, 27),
+    Position = UDim2.fromOffset(20, 82),
+    BackgroundTransparency = 1,
+    Text = "Available scripts",
+    TextColor3 = Theme.Text,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.GothamBold,
+    TextSize = 17,
+    ZIndex = 3
+}, Main)
+
+New("TextLabel", {
+    Size = UDim2.new(1, -40, 0, 18),
+    Position = UDim2.fromOffset(20, 108),
+    BackgroundTransparency = 1,
+    Text = "Choose a hub to launch. Use search to filter the list.",
+    TextColor3 = Theme.Muted,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.Gotham,
+    TextSize = 10,
+    ZIndex = 3
+}, Main)
+
+-- Search field
+local SearchWrap = New("Frame", {
+    Size = UDim2.new(1, -40, 0, 38),
+    Position = UDim2.fromOffset(20, 139),
+    BackgroundColor3 = Theme.Panel,
+    BorderSizePixel = 0,
+    ZIndex = 3
+}, Main)
+Corner(SearchWrap, 9)
+Stroke(SearchWrap, Theme.Stroke, 0.35, 1)
+
+New("TextLabel", {
+    Size = UDim2.fromOffset(30, 38),
+    Position = UDim2.fromOffset(8, 0),
+    BackgroundTransparency = 1,
+    Text = "⌕",
+    TextColor3 = Theme.PinkLight,
+    Font = Enum.Font.GothamBold,
+    TextSize = 22,
+    ZIndex = 4
+}, SearchWrap)
+
+local Search = New("TextBox", {
+    Size = UDim2.new(1, -48, 1, 0),
+    Position = UDim2.fromOffset(40, 0),
+    BackgroundTransparency = 1,
+    Text = "",
+    PlaceholderText = "Search scripts...",
+    PlaceholderColor3 = Theme.Muted,
+    TextColor3 = Theme.Text,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    ClearTextOnFocus = false,
+    Font = Enum.Font.Gotham,
+    TextSize = 12,
+    ZIndex = 4
+}, SearchWrap)
+
+-- Script list
+local List = New("ScrollingFrame", {
+    Name = "ScriptList",
+    Size = UDim2.new(1, -40, 0, 174),
+    Position = UDim2.fromOffset(20, 190),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ScrollBarThickness = 3,
+    ScrollBarImageColor3 = Theme.Pink,
+    CanvasSize = UDim2.fromOffset(0, 0),
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    ZIndex = 3
+}, Main)
+
+New("UIListLayout", {
+    Padding = UDim.new(0, 10),
+    SortOrder = Enum.SortOrder.LayoutOrder
+}, List)
 
 local Scripts = {
     {
-        Name = "WAGURI SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/elyontop/waguriscript2026/refs/heads/main/waguriii"))()]]
+        Name = "OVERDRIVE",
+        Description = "Overdrive hub loader",
+        Tag = "HUB",
+        Code = [[loadstring(game:HttpGet("https://cdn.project-reverse.org/odh_3_5_crack.luau"))()]]
     },
     {
-        Name = "OVERDRIVE H SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjBiNTIyNzdiLWUxMmItNDU1Yy1hZDFlLTc1YzExOTlhNzZmNyIsImtpbmQiOiJsb2FkZXIiLCJ2aXN1YWwiOnsiaWQiOiJtbTJvdmVyZHJpdmUifX0"))()]]
-    },
-    {
-        Name = "DAX FREEZE TOOL SCRIPT",
-        Code = [[loadstring(game:HttpGet("https://pastebin.com/raw/xTUhZJeJ"))()]],
-        LoadDelay = 30
+        Name = "ONYX",
+        Description = "Onyx no-key hub loader",
+        Tag = "NO KEY",
+        Code = [[loadstring(game:HttpGet("https://raw.githubusercontent.com/robloxscripts2026/onyx/refs/heads/main/nokey/hub.lua"))()]]
     }
 }
 
-for _, scriptData in ipairs(Scripts) do
-    local ScriptButton = Instance.new("TextButton")
-    ScriptButton.Name = scriptData.Name .. "Button"
-    ScriptButton.Size = UDim2.new(1, -20, 0, 45)
-    ScriptButton.Position = UDim2.new(0, 10, 0, 0)
-    ScriptButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
-    ScriptButton.BorderColor3 = Color3.fromRGB(255, 105, 180)
-    ScriptButton.BorderSizePixel = 1
-    ScriptButton.Text = scriptData.Name .. "  [Insert]"
-    ScriptButton.TextColor3 = Color3.fromRGB(255, 200, 220)
-    ScriptButton.Font = Enum.Font.SourceSans
-    ScriptButton.TextSize = 16
-    ScriptButton.TextXAlignment = Enum.TextXAlignment.Center
-    ScriptButton.ZIndex = 7
-    ScriptButton.Parent = ScrollingFrame
-    
-    local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
-    ButtonCorner.Parent = ScriptButton
-    
-    ScriptButton.MouseEnter:Connect(function()
-        TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 30, 40)}):Play()
-    end)
-    ScriptButton.MouseLeave:Connect(function()
-        TweenService:Create(ScriptButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 50)}):Play()
-    end)
-    
-    ScriptButton.MouseButton1Click:Connect(function()
-        local delayTime = scriptData.LoadDelay or 0
-        if delayTime > 0 then
-            ScriptButton.Text = scriptData.Name .. "  [Loading " .. delayTime .. "s]"
-            ScriptButton.BackgroundColor3 = Color3.fromRGB(80, 40, 50)
-            ScriptButton.TextColor3 = Color3.fromRGB(255, 150, 180)
-            
-            for i = delayTime, 1, -1 do
-                ScriptButton.Text = scriptData.Name .. "  [Loading " .. i .. "s]"
-                task.wait(1)
-            end
-        end
-        
-        local success, err = pcall(function()
-            loadstring(scriptData.Code)()
-        end)
-        if not success then
-            warn("Execution error: " .. tostring(err))
-            ScriptButton.Text = scriptData.Name .. "  [ERROR]"
-            ScriptButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-            task.wait(2)
-        end
-        
-        local vanishTween = TweenService:Create(Frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-        vanishTween:Play()
-        vanishTween.Completed:Connect(function()
-            Frame.Visible = false
-        end)
-    end)
+local StatusText = New("TextLabel", {
+    Size = UDim2.new(1, -40, 0, 20),
+    Position = UDim2.new(0, 20, 1, -47),
+    BackgroundTransparency = 1,
+    Text = "●  READY  |  2 SCRIPTS AVAILABLE",
+    TextColor3 = Theme.Green,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.GothamBold,
+    TextSize = 9,
+    ZIndex = 4
+}, Main)
+
+local FooterLine = New("Frame", {
+    Size = UDim2.new(1, -40, 0, 1),
+    Position = UDim2.new(0, 20, 1, -57),
+    BackgroundColor3 = Theme.Stroke,
+    BackgroundTransparency = 0.25,
+    BorderSizePixel = 0,
+    ZIndex = 3
+}, Main)
+
+New("TextLabel", {
+    Size = UDim2.new(1, -40, 0, 15),
+    Position = UDim2.new(0, 20, 1, -25),
+    BackgroundTransparency = 1,
+    Text = "ELYSCRIPTS  •  MADE FOR THE COMMUNITY",
+    TextColor3 = Theme.Muted,
+    TextXAlignment = Enum.TextXAlignment.Center,
+    Font = Enum.Font.GothamMedium,
+    TextSize = 8,
+    ZIndex = 3
+}, Main)
+
+local function SetStatus(message, color)
+    StatusText.Text = "●  " .. string.upper(message)
+    StatusText.TextColor3 = color or Theme.Green
 end
 
-local Footer = Instance.new("TextLabel")
-Footer.Name = "Footer"
-Footer.Size = UDim2.new(1, 0, 0, 30)
-Footer.Position = UDim2.new(0, 0, 1, -30)
-Footer.BackgroundTransparency = 1
-Footer.Text = "Developed by Jopio0819"
-Footer.TextColor3 = Color3.fromRGB(255, 105, 180)
-Footer.Font = Enum.Font.SourceSans
-Footer.TextSize = 14
-Footer.TextXAlignment = Enum.TextXAlignment.Center
-Footer.ZIndex = 6
-Footer.Parent = Frame
+local function MakeScriptCard(scriptData, order)
+    local Card = New("Frame", {
+        Name = scriptData.Name .. "Card",
+        Size = UDim2.new(1, -5, 0, 70),
+        BackgroundColor3 = Theme.Panel,
+        BorderSizePixel = 0,
+        LayoutOrder = order,
+        ZIndex = 4
+    }, List)
+    Corner(Card, 11)
+    local outline = Stroke(Card, Theme.Stroke, 0.4, 1)
 
-local function MakeDraggable(frame, handle)
-    local dragData = { dragging = false, dragStart = nil, startPos = nil }
-    
-    local function onInputBegan(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragData.dragging = true
-            dragData.dragStart = input.Position
-            dragData.startPos = frame.Position
-        end
-    end
-    
-    local function onInputChanged(input)
-        if dragData.dragging then
-            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                local delta = input.Position - dragData.dragStart
-                frame.Position = UDim2.new(
-                    dragData.startPos.X.Scale, 
-                    dragData.startPos.X.Offset + delta.X,
-                    dragData.startPos.Y.Scale, 
-                    dragData.startPos.Y.Offset + delta.Y
-                )
+    local Icon = New("Frame", {
+        Size = UDim2.fromOffset(42, 42),
+        Position = UDim2.fromOffset(13, 14),
+        BackgroundColor3 = Theme.Panel2,
+        BorderSizePixel = 0,
+        ZIndex = 5
+    }, Card)
+    Corner(Icon, 10)
+
+    New("TextLabel", {
+        Size = UDim2.fromScale(1, 1),
+        BackgroundTransparency = 1,
+        Text = string.sub(scriptData.Name, 1, 1),
+        TextColor3 = Theme.PinkLight,
+        Font = Enum.Font.GothamBlack,
+        TextSize = 20,
+        ZIndex = 6
+    }, Icon)
+
+    New("TextLabel", {
+        Size = UDim2.new(1, -190, 0, 22),
+        Position = UDim2.fromOffset(66, 12),
+        BackgroundTransparency = 1,
+        Text = scriptData.Name,
+        TextColor3 = Theme.Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Enum.Font.GothamBold,
+        TextSize = 13,
+        ZIndex = 5
+    }, Card)
+
+    New("TextLabel", {
+        Size = UDim2.new(1, -190, 0, 18),
+        Position = UDim2.fromOffset(66, 34),
+        BackgroundTransparency = 1,
+        Text = scriptData.Description,
+        TextColor3 = Theme.Muted,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Enum.Font.Gotham,
+        TextSize = 9,
+        ZIndex = 5
+    }, Card)
+
+    local Tag = New("TextLabel", {
+        Size = UDim2.fromOffset(52, 17),
+        Position = UDim2.new(1, -153, 0, 26),
+        BackgroundColor3 = Color3.fromRGB(57, 38, 70),
+        Text = scriptData.Tag,
+        TextColor3 = Theme.PinkLight,
+        Font = Enum.Font.GothamBold,
+        TextSize = 8,
+        ZIndex = 5
+    }, Card)
+    Corner(Tag, 5)
+
+    local Launch = New("TextButton", {
+        Size = UDim2.fromOffset(82, 34),
+        Position = UDim2.new(1, -92, 0, 18),
+        BackgroundColor3 = Theme.Pink,
+        Text = "LAUNCH",
+        TextColor3 = Color3.new(1, 1, 1),
+        Font = Enum.Font.GothamBold,
+        TextSize = 9,
+        AutoButtonColor = false,
+        ZIndex = 5
+    }, Card)
+    Corner(Launch, 8)
+    New("UIGradient", {
+        Color = ColorSequence.new(Theme.Pink, Theme.Purple),
+        Rotation = 0
+    }, Launch)
+
+    Card:SetAttribute("SearchName", string.lower(scriptData.Name .. " " .. scriptData.Description .. " " .. scriptData.Tag))
+
+    Card.MouseEnter:Connect(function()
+        Tween(Card, 0.18, {BackgroundColor3 = Theme.PanelHover})
+        outline.Transparency = 0.05
+    end)
+    Card.MouseLeave:Connect(function()
+        Tween(Card, 0.18, {BackgroundColor3 = Theme.Panel})
+        outline.Transparency = 0.4
+    end)
+
+    Launch.MouseEnter:Connect(function()
+        Tween(Launch, 0.15, {BackgroundColor3 = Theme.PinkLight})
+    end)
+    Launch.MouseLeave:Connect(function()
+        Tween(Launch, 0.15, {BackgroundColor3 = Theme.Pink})
+    end)
+
+    local busy = false
+    Launch.MouseButton1Click:Connect(function()
+        if busy then return end
+        busy = true
+        Launch.Text = "LOADING..."
+        Launch.Active = false
+        SetStatus("Launching " .. scriptData.Name, Theme.PinkLight)
+
+        task.spawn(function()
+            local ok, err = pcall(function()
+                local loader = loadstring(game:HttpGet(scriptData.Code:match('"(https?://.-)"')))
+                assert(loader, "Unable to compile the remote loader")
+                loader()
+            end)
+
+            if ok then
+                SetStatus(scriptData.Name .. " loader executed", Theme.Green)
+            else
+                warn("[ELY SCRIPTS] " .. tostring(err))
+                SetStatus("Launch failed - check executor output", Theme.Red)
             end
-        end
-    end
-    
-    local function onInputEnded(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragData.dragging = false
-        end
-    end
-    
-    handle.InputBegan:Connect(onInputBegan)
-    handle.InputChanged:Connect(onInputChanged)
-    handle.InputEnded:Connect(onInputEnded)
-    
-    local touchBegan = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.Touch then
-            local pos = input.Position
-            local abs = handle.AbsolutePosition
-            local size = handle.AbsoluteSize
-            if pos.X >= abs.X and pos.X <= abs.X + size.X and pos.Y >= abs.Y and pos.Y <= abs.Y + size.Y then
-                dragData.dragging = true
-                dragData.dragStart = input.Position
-                dragData.startPos = frame.Position
-            end
-        end
+
+            Launch.Text = "LAUNCH"
+            Launch.Active = true
+            busy = false
+        end)
     end)
-    
-    local touchMove = UserInputService.InputChanged:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if dragData.dragging and input.UserInputType == Enum.UserInputType.Touch then
-            local delta = input.Position - dragData.dragStart
-            frame.Position = UDim2.new(
-                dragData.startPos.X.Scale, 
-                dragData.startPos.X.Offset + delta.X,
-                dragData.startPos.Y.Scale, 
-                dragData.startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-    
-    local touchEnd = UserInputService.InputEnded:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType == Enum.UserInputType.Touch then
-            dragData.dragging = false
-        end
-    end)
-    
-    frame.AncestryChanged:Connect(function()
-        if not frame.Parent then
-            touchBegan:Disconnect()
-            touchMove:Disconnect()
-            touchEnd:Disconnect()
-        end
-    end)
+
+    return Card
 end
 
-MakeDraggable(LoadingContainer, LoadingTitle)
-MakeDraggable(Frame, Title)
+local Cards = {}
+for index, scriptData in ipairs(Scripts) do
+    Cards[index] = MakeScriptCard(scriptData, index)
+end
 
-local loadingTween = TweenService:Create(LoadingBar, TweenInfo.new(120, Enum.EasingStyle.Linear), {Size = UDim2.new(1, 0, 1, 0)})
-loadingTween:Play()
+local function FilterScripts()
+    local query = string.lower(Search.Text)
+    for _, card in ipairs(Cards) do
+        local searchable = card:GetAttribute("SearchName") or ""
+        card.Visible = query == "" or string.find(searchable, query, 1, true) ~= nil
+    end
+end
+Search:GetPropertyChangedSignal("Text"):Connect(FilterScripts)
 
-loadingTween.Completed:Connect(function()
-    local fadeTween = TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {Transparency = 1})
-    fadeTween:Play()
-    fadeTween.Completed:Connect(function()
-        LoadingFrame.Visible = false
-    end)
-    Frame.Visible = true
-    local showTween = TweenService:Create(Frame, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {Transparency = 0})
-    showTween:Play()
+-- Drag the window using its header.
+local dragging = false
+local dragInput
+local dragStart
+local startPosition
+
+Header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPosition = Main.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
 end)
+
+Header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(
+            startPosition.X.Scale, startPosition.X.Offset + delta.X,
+            startPosition.Y.Scale, startPosition.Y.Offset + delta.Y
+        )
+    end
+end)
+
+local minimized = false
+Minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        Tween(Main, 0.22, {Size = UDim2.fromOffset(560, 66)})
+        Minimize.Text = "+"
+    else
+        Tween(Main, 0.22, {Size = UDim2.fromOffset(560, 430)})
+        Minimize.Text = "—"
+    end
+end)
+
+Close.MouseButton1Click:Connect(function()
+    Tween(Main, 0.2, {
+        Position = UDim2.new(0.5, 0, 0.53, 18),
+        BackgroundTransparency = 1
+    })
+    task.wait(0.2)
+    ScreenGui:Destroy()
+end)
+
+-- 60-second centered loading screen, then reveal the hub.
+-- The intro overlay is transparent; the existing UI stays hidden until loading ends.
+local LoadingDuration = 60
+local LoadingStarted = os.clock()
+
+while true do
+    local elapsed = os.clock() - LoadingStarted
+    local progress = math.clamp(elapsed / LoadingDuration, 0, 1)
+    local remaining = math.max(0, math.ceil(LoadingDuration - elapsed))
+
+    IntroCountdown.Text = tostring(remaining) .. " seconds remaining"
+    IntroFill.Size = UDim2.fromScale(progress, 1)
+
+    if remaining <= 0 then
+        break
+    end
+
+    task.wait(0.1)
+end
+
+Main.Visible = true
+Main.BackgroundTransparency = 1
+Main.Position = UDim2.fromScale(0.5, 0.56)
+Tween(Main, 0.45, {
+    BackgroundTransparency = 0,
+    Position = UDim2.fromScale(0.5, 0.5)
+}, Enum.EasingStyle.Back)
+
+Tween(IntroTitle, 0.3, {TextTransparency = 1})
+Tween(IntroSub, 0.3, {TextTransparency = 1})
+Tween(IntroCountdown, 0.3, {TextTransparency = 1})
+Tween(IntroTrack, 0.3, {BackgroundTransparency = 1})
+Tween(IntroFill, 0.3, {BackgroundTransparency = 1})
+Tween(IntroGlow, 0.3, {BackgroundTransparency = 1})
+task.wait(0.35)
+Intro:Destroy()
